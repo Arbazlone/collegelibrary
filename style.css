@@ -458,18 +458,33 @@ h2 {
 
 .catalog-controls {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: 2.5rem;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .search-input, .filter-select {
-    padding: 0.9rem 1.5rem;
+    padding: 0.75rem 1rem;
     border: 2px solid var(--border-light);
-    border-radius: 60px;
-    font-size: 1rem;
-    flex: 1 1 300px;
+    border-radius: 40px;
+    font-size: 0.95rem;
+    flex: 1 1 260px;
+    max-width: 380px;
     background: white;
+    min-width: 200px;
+}
+
+@media (max-width: 500px) {
+    .catalog-controls {
+        justify-content: center;
+    }
+    .search-input, .filter-select {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
 }
 
 .books-grid {
