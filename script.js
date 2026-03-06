@@ -4,6 +4,26 @@
 // Interactive features: book catalog, search, filter, student records, counters, dynamic UI
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Expose a helper for HTML inline onclick handlers
+    window.scrollToSection = function(sectionId) {
+        const target = document.getElementById(sectionId);
+        if (!target) return;
+
+        const header = document.getElementById('mainNav');
+        const headerOffset = header ? header.getBoundingClientRect().height + 20 : 90;
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+
+        // Ensure correct scroll on mobile / Safari
+        setTimeout(() => {
+            window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+        }, 220);
+    }
     // ---------- 1. STICKY NAVBAR WITH DYNAMIC ISLAND SHADOW ----------
     const navbar = document.getElementById('mainNav');
     window.addEventListener('scroll', function() {
@@ -103,32 +123,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ---------- 4. SCROLL REVEAL ANIMATION (FADE UP) ----------
-    const revealElements = document.querySelectorAll('section:not(.hero)');
-
-    if ('IntersectionObserver' in window) {
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
-
-        revealElements.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            revealObserver.observe(el);
-        });
-    } else {
-        // Older browsers: just show sections immediately
-        revealElements.forEach(el => {
-            el.style.opacity = '1';
-            el.style.transform = 'none';
-        });
-    }
+    // NOTE: Disabling per-section visibility toggles to avoid mobile rendering issues.
+    // Sections are visible by default, so we do not manipulate opacity/transform here.
 
     // ---------- 5. SMOOTH SCROLL WITH OFFSET FOR FIXED HEADER ----------
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -141,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
 
                 const header = document.getElementById('mainNav');
-                const headerOffset = header ? header.getBoundingClientRect().height + 10 : 80;
+                const headerOffset = header ? header.getBoundingClientRect().height + 20 : 90;
                 const elementPosition = target.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -149,6 +145,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     top: offsetPosition,
                     behavior: 'smooth'
                 });
+
+                // Some mobile browsers can mis-handle smooth scroll; ensure we land in the right place
+                setTimeout(() => {
+                    window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+                }, 220);
             }
         });
     });
@@ -341,10 +342,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const catalogSection = document.getElementById('catalog');
                 if (catalogSection) {
                     const header = document.getElementById('mainNav');
-                    const headerOffset = header ? header.getBoundingClientRect().height + 10 : 80;
-                    const elementPosition = catalogSection.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                const headerOffset = header ? header.getBoundingClientRect().height + 20 : 90;
+                const elementPosition = catalogSection.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+
+                // Ensure correct position for stubborn mobile browsers
+                setTimeout(() => {
+                    window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+                }, 220);
                 }
             }
             // If href is external (starts with http), let the default behavior happen
