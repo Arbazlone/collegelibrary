@@ -1009,15 +1009,6 @@ h2 {
         pointer-events: none;
     }
 
-    @media (max-width: 760px) {
-        .table-hint {
-            display: block;
-        }
-        .records-table-wrapper::after {
-            display: block;
-        }
-    }
-
     .featured-dev {
         flex-direction: column;
         padding: 1.8rem;
@@ -1026,6 +1017,15 @@ h2 {
         border-left: none;
         padding-left: 0;
         margin-top: 1.5rem;
+    }
+}
+
+@media (max-width: 760px) {
+    .table-hint {
+        display: block;
+    }
+    .records-table-wrapper::after {
+        display: block;
     }
 }
 

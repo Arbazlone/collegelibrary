@@ -17,31 +17,49 @@ document.addEventListener('DOMContentLoaded', function() {
     // ---------- 2. MOBILE HAMBURGER MENU ----------
     const hamburger = document.getElementById('hamburgerBtn');
     const navMenu = document.getElementById('navMenu');
-    
+
+    function closeNavMenu() {
+        if (!navMenu || !hamburger) return;
+        if (!navMenu.classList.contains('active')) return;
+        navMenu.classList.remove('active');
+        const icon = hamburger.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+    }
+
+    function toggleNavMenu() {
+        if (!navMenu || !hamburger) return;
+        navMenu.classList.toggle('active');
+        const icon = hamburger.querySelector('i');
+        if (navMenu.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    }
+
     if (hamburger) {
-        hamburger.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            const icon = hamburger.querySelector('i');
-            if (navMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleNavMenu();
         });
     }
 
     // Close menu on link click
     document.querySelectorAll('.nav-menu a').forEach(link => {
         link.addEventListener('click', function() {
-            if (navMenu.classList.contains('active')) {
-                navMenu.classList.remove('active');
-                const icon = hamburger.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+            closeNavMenu();
         });
+    });
+
+    // Close menu when clicking outside it
+    document.addEventListener('click', function(e) {
+        if (!navMenu || !hamburger) return;
+        if (!navMenu.classList.contains('active')) return;
+        if (navMenu.contains(e.target) || hamburger.contains(e.target)) return;
+        closeNavMenu();
     });
 
     // ---------- 3. ANIMATED COUNTERS (SCROLL REVEAL) ----------
@@ -86,23 +104,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ---------- 4. SCROLL REVEAL ANIMATION (FADE UP) ----------
     const revealElements = document.querySelectorAll('section:not(.hero)');
-    
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                revealObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
 
-    revealElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        revealObserver.observe(el);
-    });
+    if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+        revealElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            revealObserver.observe(el);
+        });
+    } else {
+        // Older browsers: just show sections immediately
+        revealElements.forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+        });
+    }
 
     // ---------- 5. SMOOTH SCROLL WITH OFFSET FOR FIXED HEADER ----------
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
