@@ -109,11 +109,13 @@ document.addEventListener('DOMContentLoaded', function() {
         anchor.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             if (href === '#') return;
-            
+
             const target = document.querySelector(href);
             if (target) {
                 e.preventDefault();
-                const headerOffset = 80;
+
+                const header = document.getElementById('mainNav');
+                const headerOffset = header ? header.getBoundingClientRect().height + 10 : 80;
                 const elementPosition = target.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -312,7 +314,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Scroll to catalog
                 const catalogSection = document.getElementById('catalog');
                 if (catalogSection) {
-                    const headerOffset = 80;
+                    const header = document.getElementById('mainNav');
+                    const headerOffset = header ? header.getBoundingClientRect().height + 10 : 80;
                     const elementPosition = catalogSection.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
